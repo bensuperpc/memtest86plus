@@ -154,7 +154,7 @@ static void run_at(uintptr_t addr, int my_cpu)
         // Copy the thread-local storage.
         size_t locals_offset = _stacks - _start + BSP_STACK_SIZE - LOCALS_SIZE;
         for (int cpu_num = 0; cpu_num < num_available_cpus; cpu_num++) {
-            memcpy((void *)(addr + locals_offset), (void *)(_start + locals_offset), LOCALS_SIZE);
+            __builtin_memcpy((void *)(addr + locals_offset), (void *)(_start + locals_offset), LOCALS_SIZE);
             locals_offset += AP_STACK_SIZE;
         }
     }

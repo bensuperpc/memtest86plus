@@ -762,8 +762,8 @@ void smp_init(bool smp_enable)
 
     ap_startup_addr = (uintptr_t)startup;
 
-    size_t ap_trampoline_size = ap_trampoline_end - ap_trampoline;
-    memcpy((uint8_t *)HEAP_BASE_ADDR, ap_trampoline, ap_trampoline_size);
+    const size_t ap_trampoline_size = ap_trampoline_end - ap_trampoline;
+    __builtin_memcpy((uint8_t *)HEAP_BASE_ADDR, ap_trampoline, ap_trampoline_size);
 
     alloc_addr = HEAP_BASE_ADDR + ap_trampoline_size;
 }
