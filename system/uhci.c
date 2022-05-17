@@ -446,7 +446,7 @@ bool uhci_init(int bus, int dev, int func, uint16_t io_base, usb_hcd_t *hcd)
     uintptr_t workspace_addr = pm_map[0].end << PAGE_SHIFT;
     workspace_t *ws = (workspace_t *)workspace_addr;
 
-    memset(ws, 0, sizeof(workspace_t));
+    __builtin_memset(ws, 0, sizeof(workspace_t));
 
     ws->io_base = io_base;
 

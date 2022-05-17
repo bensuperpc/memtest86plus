@@ -468,7 +468,7 @@ bool ohci_init(uintptr_t base_addr, usb_hcd_t *hcd)
     uintptr_t workspace_addr = pm_map[0].end << PAGE_SHIFT;
     workspace_t *ws = (workspace_t *)workspace_addr;
 
-    memset(ws, 0, sizeof(workspace_t));
+    __builtin_memset(ws, 0, sizeof(workspace_t));
 
     ws->op_regs = op_regs;
 

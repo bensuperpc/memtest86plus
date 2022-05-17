@@ -646,7 +646,7 @@ boot_params_t *efi_setup(efi_handle_t handle, efi_system_table_t *sys_table_arg,
             print_string("failed to allocate low memory for boot params\n");
             goto fail;
         }
-        memset(boot_params, 0, sizeof(boot_params_t));
+        __builtin_memset(boot_params, 0, sizeof(boot_params_t));
 
         uintptr_t cmd_line_addr = (uintptr_t)boot_params + sizeof(boot_params_t);
         get_cmd_line(image, cmd_line_length, (char *)cmd_line_addr);

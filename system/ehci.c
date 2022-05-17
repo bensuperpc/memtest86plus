@@ -324,8 +324,6 @@ static void release_ehci_port(ehci_op_regs_t *op_regs, int port_idx)
 static void build_ehci_qtd(ehci_qtd_t *this_qtd, const ehci_qtd_t *final_qtd, uint8_t control, uint16_t dt,
                            const void *buffer, size_t length)
 {
-    memset((void *)this_qtd, 0, sizeof(ehci_qtd_t));
-
     if (this_qtd != final_qtd) {
         this_qtd->next_qtd_ptr     = (uintptr_t)(this_qtd + 1);
         this_qtd->alt_next_qtd_ptr = (uintptr_t)(final_qtd);
@@ -337,12 +335,12 @@ static void build_ehci_qtd(ehci_qtd_t *this_qtd, const ehci_qtd_t *final_qtd, ui
     this_qtd->control       = EHCI_QTD_CPAGE(0) | EHCI_QTD_CERR(3) | control;
     this_qtd->data_length   = dt | (length & 0x7fff);
     this_qtd->buffer_ptr[0] = (uintptr_t)buffer;
+
+    __builtin_memset((char *)this_qtd + offsetof(ehci_qtd_t, buffer_ptr[1]), 0, sizeof(ehci_qtd_t) - offsetof(ehci_qtd_t, buffer_ptr[1]));
 }
 
 static void build_ehci_qhd(ehci_qhd_t *qhd, const ehci_qtd_t *qtd, const usb_ep_t *ep, bool is_interrupt)
 {
-    memset((void *)qhd, 0, sizeof(ehci_qhd_t));
-
     uint32_t endpoint_speed = usb_to_ehci_speed(ep->device_speed);
 
     uint32_t parent_addr = (ep->driver_data >> 0) & 0x7f;
@@ -372,7 +370,9 @@ static void build_ehci_qhd(ehci_qhd_t *qhd, const ehci_qtd_t *qtd, const usb_ep_
         qhd->epcc[0] |= EHCI_QH_HRL;
     }
 
+    qhd->current_qtd_ptr = 0;
     qhd->next_qtd_ptr = (uintptr_t)qtd;
+    __builtin_memset((char *)qhd + offsetof(ehci_qhd_t, alt_next_qtd_ptr), 0, sizeof(ehci_qhd_t) - offsetof(ehci_qhd_t, alt_next_qtd_ptr));
 }
 
 static bool do_async_transfer(const workspace_t *ws, int num_tds)
@@ -535,7 +535,7 @@ bool ehci_init(int bus, int dev, int func, uintptr_t base_addr, usb_hcd_t *hcd)
     uintptr_t workspace_addr = pm_map[0].end << PAGE_SHIFT;
     workspace_t *ws = (workspace_t *)workspace_addr;
 
-    memset(ws, 0, sizeof(workspace_t));
+    __builtin_memset(ws, 0, sizeof(workspace_t));
 
     ws->op_regs = op_regs;
 

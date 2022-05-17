@@ -667,14 +667,14 @@ static int allocate_slot(const usb_hcd_t *hcd)
     ws->control_ep_tr_addr   = device_workspace_addr + XHCI_MAX_OP_CONTEXT_SIZE;
     ws->interrupt_ep_tr_addr = device_workspace_addr + XHCI_MAX_OP_CONTEXT_SIZE + sizeof(ep_tr_t);
 
-    memset((void *)device_workspace_addr, 0, DEVICE_WS_SIZE);
+    __builtin_memset((void *)device_workspace_addr, 0, DEVICE_WS_SIZE);
 
     // Temporarily allocate and initialise the input context data structure on the heap.
     // As we only use this temporarily, there's no need to adjust pm_map.
 
     ws->input_context_addr = device_workspace_addr - XHCI_MAX_IP_CONTEXT_SIZE;
 
-    memset((void *)ws->input_context_addr, 0, XHCI_MAX_IP_CONTEXT_SIZE);
+    __builtin_memset((void *)ws->input_context_addr, 0, XHCI_MAX_IP_CONTEXT_SIZE);
 
     // Allocate a device slot and set up its output context.
 
@@ -946,7 +946,7 @@ bool xhci_init(uintptr_t base_addr, usb_hcd_t *hcd)
 
     uint8_t port_type[XHCI_MAX_PORTS];
 
-    memset(port_type, 0, sizeof(port_type));
+    __builtin_memset(port_type, 0, sizeof(port_type));
 
     xhci_cap_regs_t *cap_regs = (xhci_cap_regs_t *)base_addr;
 
@@ -1044,7 +1044,7 @@ bool xhci_init(uintptr_t base_addr, usb_hcd_t *hcd)
         return false;
     }
 
-    memset((void *)scratchpad_vaddr, 0, scratchpad_size);
+    __builtin_memset((void *)scratchpad_vaddr, 0, scratchpad_size);
 
     // Allocate and initialise the device context base address and scratchpad buffer arrays on the heap.
     // Both need to be aligned on a 64 byte boundary.
@@ -1060,7 +1060,7 @@ bool xhci_init(uintptr_t base_addr, usb_hcd_t *hcd)
         return false;
     }
 
-    memset((void *)device_context_index_vaddr, 0, device_context_index_size);
+    __builtin_memset((void *)device_context_index_vaddr, 0, device_context_index_size);
 
     uint64_t *device_context_index = (uint64_t *)device_context_index_vaddr;
     if (num_scratchpad_buffers > 0) {
@@ -1080,7 +1080,7 @@ bool xhci_init(uintptr_t base_addr, usb_hcd_t *hcd)
     uintptr_t workspace_addr = pm_map[0].end << PAGE_SHIFT;
     workspace_t *ws = (workspace_t *)workspace_addr;
 
-    memset(ws, 0, sizeof(workspace_t));
+    __builtin_memset(ws, 0, sizeof(workspace_t));
 
     ws->op_regs = op_regs;
     ws->rt_regs = rt_regs;
