@@ -10,6 +10,15 @@
  * Copyright (C) 2004-2022 Samuel Demeulemeester.
  */
 
+/* Vendor IDs */
+#define VID_INTEL   0x8086
+#define VID_AMD     0x1022
+#define VID_HYGON   0x1D94
+#define VID_SIS     0x1039
+#define VID_NVIDIA  0x10DE
+#define VID_ATI     0x1002
+#define VID_VIA     0x1106
+
 #define I2C_WRITE   0
 #define I2C_READ    1
 
@@ -51,18 +60,6 @@
 
 #define SPD5_MR11 11
 
-struct pci_smbus_controller_ops {
-    void (*get_adr)(void);
-    uint8_t (*read_spd_byte)(uint8_t dimmadr, uint16_t bytenum);
-};
-
-struct pci_smbus_controller {
-    uint16_t vendor;
-    uint16_t device;
-    uint16_t ops;
-    char     *name;
-};
-
 typedef struct spd_infos {
     bool        isValid;
     uint8_t     slot_num;
@@ -94,8 +91,8 @@ typedef struct ram_infos {
 
 extern ram_info ram;
 
-#define get_spd(smb_idx, slot_idx, spd_adr) \
-    smbcontrollerops[smbcontrollers[smb_idx].ops].read_spd_byte(slot_idx, spd_adr)
+#define get_spd(slot_idx, spd_adr) \
+    ich5_read_spd_byte(slot_idx, spd_adr)
 
 /**
  * Print SMBUS Info
