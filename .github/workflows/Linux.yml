@@ -32,7 +32,7 @@ jobs:
 
       - name: Make all build32
         env:
-          C: ${{matrix.compiler}}
+          CC: ${{matrix.compiler}}
         working-directory: ./build32
         run: make -j 2 all
 
@@ -42,7 +42,7 @@ jobs:
 
       - name: Make all build64
         env:
-          C: ${{matrix.compiler}}
+          CC: ${{matrix.compiler}}
         working-directory: ./build64
         run: make -j 2 all
 
@@ -52,12 +52,12 @@ jobs:
 
       - name: Make iso build32
         env:
-          C: ${{matrix.compiler}}
+          CC: ${{matrix.compiler}}
         working-directory: ./build32
         run: make -j 2 iso
 
       - name: Make iso build64
         env:
-          C: ${{matrix.compiler}}
+          CC: ${{matrix.compiler}}
         working-directory: ./build64
         run: make -j 2 iso
